@@ -1,0 +1,19 @@
+mount c c:/masm
+c:
+debug
+
+Task: Small To Capital
+mov ah,01
+int 21h
+mov dl,al
+sub dl,20
+move ah,02
+int 21h
+
+Task: Capital To Small
+mov ah,01
+int 21h
+mov dl,al
+add dl,20
+move ah,02
+int 21h
