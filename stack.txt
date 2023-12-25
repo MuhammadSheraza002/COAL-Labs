@@ -1,0 +1,467 @@
+In assembly language programming, the stack segment typically defines the memory area used for the program's stack, and the size of the stack is determined by the .STACK directive. In your example, the stack segment is declared as .STACK 100h, which means the stack size is 256 bytes (100h in hexadecimal is 256 in decimal).
+
+a. What is the hex contents of SP when the program begins?
+The stack pointer (SP) is a register that points to the top of the stack. When a program begins, the SP is usually set to the highest memory address of the stack segment, which in this case would be the starting address of the stack segment. So, the initial value of SP would be 100h (in hexadecimal).
+
+b. What is the maximum hex number of words that the stack may contain?
+Since the stack size is 256 bytes, and each word typically consists of 2 bytes (16 bits), you can calculate the maximum number of words the stack can contain by dividing the stack size (in bytes) by the size of a word (in bytes):
+
+Maximum number of words = Stack size (in bytes) / Size of a word (in bytes)
+
+Maximum number of words = 256 bytes / 2 bytes/word = 128 words
+
+So, the maximum number of words that the stack may contain is 128 words. In hexadecimal, this is 80h.
+
+
+
+2.Suppose that AX= 1234h, BX= 5678h, CX = 9ABCh, and SP=
+1 OOh.° Give the contents of AX, BX, CX, and SP after executing
+the following instructions:
+PUSH AX
+PUSH BX
+XCHG AX,CX
+POP ex
+PUSH AX •.
+POP J BX
+
+
+Let's go through the instructions one by one and update the values of AX, BX, CX, and SP after each instruction.
+
+Initially:
+
+AX = 1234h
+BX = 5678h
+CX = 9ABCh
+SP = 100h
+PUSH AX:
+
+Push the value of AX onto the stack, and SP decreases by 2.
+The value 1234h is pushed onto the stack, and SP becomes FEh.
+AX remains 1234h.
+BX and CX remain unchanged.
+PUSH BX:
+
+Push the value of BX onto the stack, and SP decreases by 2.
+The value 5678h is pushed onto the stack, and SP becomes FCh.
+AX remains 1234h.
+BX remains 5678h.
+CX remains unchanged.
+XCHG AX, CX:
+
+Exchange the values of AX and CX.
+AX becomes 9ABCh, and CX becomes 1234h.
+SP, BX, and the stack remain unchanged.
+POP CX:
+
+Pop a 16-bit value from the stack into CX, and SP increases by 2.
+The value 1234h is popped from the stack into CX, and SP becomes FEh.
+AX remains 9ABCh.
+BX remains 5678h.
+CX becomes 1234h.
+PUSH AX:
+
+Push the value of AX (9ABCh) onto the stack, and SP decreases by 2.
+The value 9ABCh is pushed onto the stack, and SP becomes FCh.
+AX remains 9ABCh.
+BX remains 5678h.
+CX remains 1234h.
+POP BX:
+
+Pop a 16-bit value from the stack into BX, and SP increases by 2.
+The value 9ABCh is popped from the stack into BX, and SP becomes FEh.
+AX remains 9ABCh.
+BX becomes 9ABCh.
+CX remains 1234h.
+After executing all the instructions:
+
+AX = 9ABCh
+BX = 9ABCh
+CX = 1234h
+SP = FEh
+
+
+
+
+3.When the stack has completely filled the stack area, SP = 0. If another
+word is pu.shcd onto the stack, what would happen to SP?
+What might happen 10 the program?
+
+When the stack is completely filled, and you attempt to push another word onto the stack, it will result in a stack overflow. In your scenario, if SP = 0 when the stack is full, pushing another word will decrement the SP further.
+
+As SP decreases, it may reach the lower bound of the stack segment (typically defined by the .STACK directive), which in your previous example was 100h (256 bytes). When SP goes below this lower limit (e.g., SP = -2, SP = -4, etc., in hexadecimal), it can lead to memory corruption, overwriting data or code in areas of memory outside the stack segment. This can result in unpredictable program behavior and may even cause the program to crash or malfunction.
+
+In a typical scenario, it's essential to manage the stack size properly to avoid stack overflows. You should ensure that you don't push more data onto the stack than it can accommodate within its defined size, as exceeding the stack's limits can lead to unexpected and undesirable consequences in your program.
+
+
+4.Suppose a program contains the lines
+CALL PROCl
+MOV AX,BX
+and (a) instruction MOV AX,BX is stored at 08FD:0203h, (b) PROCI
+Is a NEAR procedure that begins at 08FD:300h, (c) SP= OIOAh.
+What are the contents of JP and SP just after CALL PROCl is executed?
+What word is on top of the stack?
+
+To determine the contents of IP and SP just after the CALL instruction is executed, we first need to understand the effect of a CALL instruction on the stack. When a CALL instruction is executed, it pushes the return address onto the stack. In this case, since the CALL instruction is CALL PROCl, the return address will be the address of the next instruction after the CALL. After pushing the return address onto the stack, the IP is set to the entry point of the called procedure (PROCl in this case).
+
+Given the information provided:
+(a) The instruction MOV AX, BX is stored at 08FD:0203h.
+(b) PROCl is a NEAR procedure that begins at 08FD:300h.
+(c) SP = 010Ah.
+
+Let's break down the steps:
+
+The CALL instruction is executed at address 08FD:0203h. This means the return address will be 08FD:0205h, which is the address of the next instruction.
+
+The return address (08FD:0205h) is pushed onto the stack. Since the stack grows downward, the SP will decrease by 2, and the value at SP will become 08FD:0205h.
+
+The IP is set to the entry point of the called procedure, which is 08FD:0300h (PROCl).
+
+After the CALL instruction, the contents of IP and SP are as follows:
+
+IP = 08FD:0300h (the entry point of the called procedure)
+SP = 08FD:0205h (the return address pushed onto the stack)
+The word on top of the stack is 08FD:0205h, which is the return address.
+
+
+
+5.Suppose SP= 0200h, top of stack = 012Ah. What are the contents
+Of JP and SP
+a. after RET is executed, where RET appears in a NEAR procedure?
+b. after RET 4 is executed, where RET ap~;m in a NEAR procc_dure'
+
+
+Let's examine the contents of IP and SP after the execution of RET instructions in both scenarios:
+
+Given:
+
+SP = 0200h
+Top of stack = 012Ah
+a. After RET is executed (where RET appears in a NEAR procedure):
+
+The RET instruction, when executed, pops the return address from the stack and sets IP to that address.
+The top of the stack (value 012Ah) is popped, and SP is incremented by 2.
+IP is set to the popped value (012Ah).
+After the RET instruction is executed:
+
+IP = 012Ah
+SP = 0202h (SP was incremented by 2)
+b. After RET 4 is executed (where RET appears in a NEAR procedure):
+
+The RET instruction, when followed by a numerical value (RET 4), pops the return address from the stack, adds the specified value to SP, and sets IP to the popped address.
+The top of the stack (value 012Ah) is popped, SP is incremented by 4, and IP is set to the popped value (012Ah).
+After the RET 4 instruction is executed:
+
+IP = 012Ah
+SP = 0204h (SP was incremented by 4)
+In both scenarios, the IP is set to 012Ah, which is the return address from the stack. The difference lies in the change to SP: in the first scenario (a), SP is incremented by 2, and in the second scenario (b), SP is incremented by 4.
+
+
+
+Write some code to
+a. place the top of the stack into AX, without changing tilt!
+stackcontents. • •
+- b. place the word that is below the stack top into ex. without
+changing the stack contents. You may use AX.
+c. exchange the top two words on the stack. You may use AX
+and B.X.. · ' .
+
+
+
+Here's a simple x86 assembly code for each of your requirements using the stack operations:
+
+a. To place the top of the stack into AX without changing the stack contents:
+
+assembly
+Copy code
+POP AX ; Pop the top of the stack into AX
+PUSH AX ; Push the value back onto the stack (optional, if you want to keep the stack unchanged)
+b. To place the word that is below the stack top into CX without changing the stack contents:
+
+assembly
+Copy code
+POP AX      ; Pop the top of the stack into AX
+POP CX      ; Pop the word below the top into CX
+PUSH AX     ; Push the value back onto the stack (optional, to keep the stack unchanged)
+PUSH CX     ; Push the word you popped earlier back onto the stack (optional, to keep the stack unchanged)
+c. To exchange the top two words on the stack using AX and BX:
+
+assembly
+Copy code
+POP AX      ; Pop the top of the stack into AX
+POP BX      ; Pop the second word into BX
+PUSH AX     ; Push AX (originally the top) back onto the stack, now as the second element
+PUSH BX     ; Push BX (originally the second) back onto the stack, now as the top
+Please note that these instructions assume a little-endian stack architecture where the top of the stack is the lowest memory address. You can adjust them if your architecture is big-endian. Also, you may need to consider stack boundary conditions to ensure that these operations are safe.
+
+
+
+6.·Procedures arc supposed to return the stack to the .:alling program
+in the same condition that they received it. However, it
+may be !lseful to have procedures that alter the stack. For example,
+suppose we would like to write a NEAR p_roccdure
+SAVE_REGS that saves BX,CX,DX,Sl,Dl,BP,DS, and ES on the
+stack. After pushing these. registers, the stack would look like this:
+ES ·content
+DX cont.,nt
+ex content
+BX content
+return address (offset)
+Now, unfortunately, SAVE_REGS can't return to the calling program,
+because the return address is not at the top of the stack.
+a. Devise a way to implement a proce<lurt! SAVE_REGS that gets
+around this problem (you may use AX to do this).
+b. Write a procedure RESTORE_REGS that restores the registers
+th.at SAVE_REGS has saved.
+
+
+You can implement the SAVE_REGS procedure to save the registers and still allow the calling program to return by using an additional register to temporarily store the return address. You can follow these steps:
+
+a. Implement SAVE_REGS:
+
+assembly
+Copy code
+SAVE_REGS PROC
+    PUSH AX         ; Save AX temporarily
+    PUSH BX
+    PUSH CX
+    PUSH DX
+    PUSH SI
+    PUSH DI
+    PUSH BP
+    PUSH DS
+    PUSH ES
+
+    ; Store the return address in AX
+    MOV AX, [BP + 4]
+
+    ; Push the return address onto the stack
+    PUSH AX
+
+    ; Restore AX and return
+    POP AX
+    RET
+SAVE_REGS ENDP
+In this implementation, before saving the registers, we temporarily store the return address in AX. Then, we push the return address onto the stack, ensuring that the stack is in the expected state for the calling program.
+
+b. Implement RESTORE_REGS to restore the saved registers:
+
+assembly
+Copy code
+RESTORE_REGS PROC
+    POP AX          ; Pop the return address
+    POP ES
+    POP DS
+    POP BP
+    POP DI
+    POP SI
+    POP DX
+    POP CX
+    POP BX
+    POP AX          ; Restore AX
+    RET
+RESTORE_REGS ENDP
+In this procedure, we first pop the return address from the stack. Then, we pop the registers in reverse order, just as they were pushed by SAVE_REGS. Finally, we restore AX and return.
+
+With these two procedures, you can use SAVE_REGS to save registers and RESTORE_REGS to restore them, ensuring that the stack is in the same condition as before when control returns to the calling program.
+
+
+
+
+You can implement the SAVE_REGS procedure to save the registers and still allow the calling program to return by using an additional register to temporarily store the return address. You can follow these steps:
+
+a. Implement SAVE_REGS:
+
+assembly
+Copy code
+SAVE_REGS PROC
+    PUSH AX         ; Save AX temporarily
+    PUSH BX
+    PUSH CX
+    PUSH DX
+    PUSH SI
+    PUSH DI
+    PUSH BP
+    PUSH DS
+    PUSH ES
+
+    ; Store the return address in AX
+    MOV AX, [BP + 4]
+
+    ; Push the return address onto the stack
+    PUSH AX
+
+    ; Restore AX and return
+    POP AX
+    RET
+SAVE_REGS ENDP
+In this implementation, before saving the registers, we temporarily store the return address in AX. Then, we push the return address onto the stack, ensuring that the stack is in the expected state for the calling program.
+
+b. Implement RESTORE_REGS to restore the saved registers:
+
+assembly
+Copy code
+RESTORE_REGS PROC
+    POP AX          ; Pop the return address
+    POP ES
+    POP DS
+    POP BP
+    POP DI
+    POP SI
+    POP DX
+    POP CX
+    POP BX
+    POP AX          ; Restore AX
+    RET
+RESTORE_REGS ENDP
+In this procedure, we first pop the return address from the stack. Then, we pop the registers in reverse order, just as they were pushed by SAVE_REGS. Finally, we restore AX and return.
+
+With these two procedures, you can use SAVE_REGS to save registers and RESTORE_REGS to restore them, ensuring that the stack is in the same condition as before when control returns to the calling program.
+
+
+
+.model small
+.data
+message db "?$"
+randomMask dw 0001h   ; Initial random mask for XOR
+randomResult dw 0000h ; Initial result for random number
+
+.code
+org 100h
+
+READ PROC
+    mov ah, 0Ah
+    lea dx, message
+    int 21h
+    mov ax, 0       ; Clear AX to store the binary number
+    mov cx, 10      ; Number of bits to read
+read_loop:
+    mov dl, 0       ; Clear DL to read a digit
+    mov ah, 01h
+    int 21h
+    sub dl, '0'     ; Convert ASCII digit to binary
+    shl ax, 1       ; Shift left in AX
+    or ax, dx       ; Set the least significant bit
+    loop read_loop
+    ret
+READ ENDP
+
+RANDOM PROC
+    shl ax, 1       ; Shift left once
+    xor bx, bx
+    mov bl, ah      ; Move the contents of AH to BL
+    shr bx, 6       ; Shift BL 6 bits to the right
+    xor ah, bx      ; XOR bit 0 with bits 14 and 15
+    and ah, 7FFFh   ; Clear bit 15
+    ret
+RANDOM ENDP
+
+WRITE PROC
+    mov cx, 16      ; Number of bits to display
+    mov dx, ax      ; Copy the value in AX to DX
+write_loop:
+    shl dx, 1       ; Shift left in DX
+    adc dl, 0       ; Move the carry flag to DL
+    mov ah, 2
+    mov dl, '0'
+    rcr dl, 1
+    int 21h         ; Display the bit
+    loop write_loop
+    ret
+WRITE ENDP
+
+MAIN PROC
+    mov ah, 2
+    mov dl, '?'
+    int 21h         ; Display '?'
+    mov cx, 100     ; Loop for 100 random numbers
+random_loop:
+    call READ       ; Read a binary number into AX
+    call RANDOM     ; Generate a random number
+    call WRITE      ; Display the random number in binary
+    mov ah, 2
+    mov dl, ' '     ; Display a space
+    int 21h
+    dec cx
+    jnz random_loop ; Loop until 100 random numbers are displayed
+    int 20h         ; Terminate the program
+MAIN ENDP
+
+END
+
+
+
+
+Writ; a program that lets the user type some text, consisting of
+words separated by blanks, ending with a carriage return, and displays
+the text in the same word order as entered, but with the let__,
+ters ·in each word reversed. For example, "this is a test" becomes
+"siht si a tset".
+
+
+
+.model small
+.data
+input_buffer db 255 dup(?)
+output_buffer db 255 dup(?)
+
+.code
+org 100h
+
+MAIN PROC
+    mov ah, 09h
+    mov dx, offset prompt
+    int 21h             ; Display prompt message
+
+    mov ah, 0Ah
+    mov dx, offset input_buffer
+    int 21h             ; Read input from the user
+
+    call ReverseWords   ; Reverse the letters in each word
+
+    mov ah, 09h
+    mov dx, offset output_buffer
+    int 21h             ; Display the modified text
+
+    mov ah, 4Ch
+    int 21h             ; Terminate the program
+
+ReverseWords PROC
+    mov si, offset input_buffer  ; SI points to the input
+    mov di, offset output_buffer ; DI points to the output
+    cld                         ; Ensure forward string processing
+
+reverse_word_loop:
+    lodsb                       ; Load the next character into AL
+    or  al, al
+    jz  done                    ; If it's the end of the string, we are done
+
+    cmp al, ' '                 ; Check if the character is a space
+    je  space_found             ; If a space is found, reverse the letters in the word
+
+    stosb                       ; Store the character in the output buffer
+    jmp reverse_word_loop       ; Process the next character
+
+space_found:
+    dec di                      ; Adjust DI to point to the last character in the word
+    mov cx, di                  ; CX = DI
+    sub cx, si                  ; CX = Number of characters in the word
+
+reverse_letter_loop:
+    lodsb                       ; Load the next character into AL
+    stosb                       ; Store the character in the output buffer
+    loop reverse_letter_loop    ; Repeat for all characters in the word
+
+    jmp reverse_word_loop       ; Continue with the next word
+
+done:
+    mov al, '$'                 ; Null-terminate the output string
+    stosb
+
+    ret
+ReverseWords ENDP
+
+prompt db "Enter some text (up to 255 characters): $"
+
+MAIN ENDP
+
+END
